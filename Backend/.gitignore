@@ -1,2 +1,3 @@
 node_modules/
 EliFin-Advisor/node_modules/
+.env
