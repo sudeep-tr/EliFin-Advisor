@@ -8,10 +8,14 @@ app.use(express.json());
 
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
+const transactionRoutes = require("./routes/transactionRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 
 app.use("/api/auth", authRoutes);
 
 app.use("/api/users", userRoutes);
+app.use("/api/transactions", transactionRoutes);
+app.use("/api/ai", aiRoutes);
 
 // Middleware
 app.use(cors());
