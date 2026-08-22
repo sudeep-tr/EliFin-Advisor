@@ -19,7 +19,7 @@ function Register() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const API = "http://localhost:5000";
+  const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   const handleChange = (e) => {
     setFormData({
