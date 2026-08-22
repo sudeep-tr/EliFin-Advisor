@@ -9,7 +9,7 @@ function AIAdvisor() {
   const navigate = useNavigate();
   const messagesEndRef = useRef(null);
 
-  const API = "http://localhost:5000";
+  const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const token = localStorage.getItem("token");
 
   const [messages, setMessages] = useState([
