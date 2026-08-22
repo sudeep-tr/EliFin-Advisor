@@ -15,11 +15,11 @@ const app = express();
 
 app.use(
   cors({
-    origin: [ 
+    origin: [
       "http://localhost:5173",
-      "https://your-frontend.vercel.app",
+      "https://eli-fin-advisor.vercel.app",
     ],
-      credentials: true,
+    credentials: true,
   })
 );
 
