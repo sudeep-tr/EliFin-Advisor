@@ -1,60 +1,73 @@
 const mongoose = require("mongoose");
 
 const investmentSchema = new mongoose.Schema(
-  {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
+{
+user: {
+type: mongoose.Schema.Types.ObjectId,
+ref: "User",
+required: true,
+},
 
-    type: {
-      type: String,
-      enum: [
-        "Stocks",
-        "Mutual Fund",
-        "SIP",
-        "FD",
-        "Gold",
-        "Bonds",
-        "Crypto",
-        "Other",
-      ],
-      required: true,
-    },
+name: {
+  type: String,
+  required: true,
+  trim: true,
+},
 
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
+type: {
+  type: String,
+  default: "SIP",
+  trim: true,
+},
 
-    investedAmount: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
+category: {
+  type: String,
+  default: "Mutual Fund",
+  trim: true,
+},
 
-    currentValue: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
+monthlyAmount: {
+  type: Number,
+  default: 0,
+  min: 0,
+},
 
-    riskLevel: {
-      type: String,
-      enum: ["Low", "Moderate", "High"],
-      default: "Moderate",
-    },
+investedAmount: {
+  type: Number,
+  default: 0,
+  min: 0,
+},
 
-    purchaseDate: {
-      type: Date,
-      default: Date.now,
-    },
-  },
-  {
-    timestamps: true,
-  }
+currentValue: {
+  type: Number,
+  default: 0,
+  min: 0,
+},
+
+frequency: {
+  type: String,
+  default: "monthly",
+  trim: true,
+},
+
+startDate: {
+  type: Date,
+},
+
+notes: {
+  type: String,
+  default: "",
+  trim: true,
+},
+
+
+},
+{
+timestamps: true,
+}
 );
 
-module.exports = mongoose.model("Investment", investmentSchema);
+module.exports = mongoose.model(
+"Investment",
+investmentSchema
+);
