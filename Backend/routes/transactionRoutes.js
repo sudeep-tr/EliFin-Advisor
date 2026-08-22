@@ -6,6 +6,18 @@ const router = express.Router();
 
 router.post("/", protect, async (req, res) => {
   try {
+
+    const userId =
+      req.user?.id ||
+      req.user?._id ||
+      req.user?.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        message: "User ID not found"
+      });
+    }
+
     const {
       type,
       amount,
@@ -14,25 +26,46 @@ router.post("/", protect, async (req, res) => {
       date
     } = req.body;
 
-    const transaction = await Transaction.create({
-      user: req.user.userId,
-      type,
-      amount,
-      category,
-      description,
-      date
-    });
+    const transaction =
+      await Transaction.create({
+
+        user: userId,
+
+        type,
+
+        amount: Number(amount),
+
+        category,
+
+        description,
+
+        date: date || new Date()
+      });
 
     res.status(201).json({
-      message: "Transaction added successfully",
+
+      message:
+        "Transaction added successfully",
+
       transaction
+
     });
 
   } catch (error) {
+
+    console.error(
+      "CREATE TRANSACTION ERROR:",
+      error
+    );
+
     res.status(500).json({
+
       message: "Server error",
+
       error: error.message
+
     });
+
   }
 });
 router.get("/", protect, async (req, res) => {
@@ -44,58 +77,6 @@ router.get("/", protect, async (req, res) => {
     res.status(200).json({
       message: "Transactions fetched successfully",
       transactions
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      message: "Server error",
-      error: error.message
-    });
-  }
-});
-router.get("/summary", protect, async (req, res) => {
-  try {
-    const transactions = await Transaction.find({
-      user: req.user.userId
-    });
-
-    let totalIncome = 0;
-    let totalExpenses = 0;
-
-    const categoryExpenses = {};
-
-    transactions.forEach((transaction) => {
-      if (transaction.type === "income") {
-        totalIncome += transaction.amount;
-      }
-
-      if (transaction.type === "expense") {
-        totalExpenses += transaction.amount;
-
-        if (!categoryExpenses[transaction.category]) {
-          categoryExpenses[transaction.category] = 0;
-        }
-
-        categoryExpenses[transaction.category] += transaction.amount;
-      }
-    });
-
-    const savings = totalIncome - totalExpenses;
-
-    const savingsRate =
-      totalIncome > 0
-        ? ((savings / totalIncome) * 100).toFixed(2)
-        : 0;
-
-    res.status(200).json({
-      message: "Financial summary fetched successfully",
-      summary: {
-        totalIncome,
-        totalExpenses,
-        savings,
-        savingsRate: Number(savingsRate),
-        categoryExpenses
-      }
     });
 
   } catch (error) {
@@ -394,6 +375,175 @@ router.put("/:id", protect, async (req, res) => {
     res.status(500).json({
       message: "Server error",
       error: error.message
+    });
+  }
+});
+// ==========================================
+// FINANCIAL SUMMARY + HEALTH SCORE
+// GET /api/transactions/summary
+// ==========================================
+
+router.get("/summary", protect, async (req, res) => {
+  try {
+    const transactions = await Transaction.find({
+      user: req.user.userId,
+    });
+
+    let totalIncome = 0;
+    let totalExpenses = 0;
+
+    const categoryExpenses = {};
+
+    transactions.forEach((transaction) => {
+      const amount = Number(transaction.amount);
+
+      if (transaction.type === "income") {
+        totalIncome += amount;
+      }
+
+      if (transaction.type === "expense") {
+        totalExpenses += amount;
+
+        categoryExpenses[transaction.category] =
+          (categoryExpenses[transaction.category] || 0) +
+          amount;
+      }
+    });
+
+    const savings = totalIncome - totalExpenses;
+
+    const savingsRate =
+      totalIncome > 0
+        ? (savings / totalIncome) * 100
+        : 0;
+
+    // ==========================================
+    // HEALTH SCORE
+    // ==========================================
+
+    let healthScore = 0;
+
+    // 1. Savings Rate - 40 points
+    let savingsScore = 0;
+
+    if (savingsRate >= 50) {
+      savingsScore = 40;
+    } else if (savingsRate >= 30) {
+      savingsScore = 32;
+    } else if (savingsRate >= 20) {
+      savingsScore = 24;
+    } else if (savingsRate >= 10) {
+      savingsScore = 15;
+    } else if (savingsRate > 0) {
+      savingsScore = 8;
+    }
+
+    // 2. Expense Control - 25 points
+    let expenseScore = 0;
+
+    const expenseRate =
+      totalIncome > 0
+        ? (totalExpenses / totalIncome) * 100
+        : 100;
+
+    if (expenseRate <= 30) {
+      expenseScore = 25;
+    } else if (expenseRate <= 50) {
+      expenseScore = 20;
+    } else if (expenseRate <= 70) {
+      expenseScore = 15;
+    } else if (expenseRate <= 90) {
+      expenseScore = 8;
+    }
+
+    // 3. Spending Distribution - 15 points
+    let spendingScore = 15;
+
+    if (totalExpenses > 0) {
+      const largestCategory = Math.max(
+        ...Object.values(categoryExpenses)
+      );
+
+      const largestCategoryRate =
+        (largestCategory / totalExpenses) * 100;
+
+      if (largestCategoryRate > 70) {
+        spendingScore = 5;
+      } else if (largestCategoryRate > 50) {
+        spendingScore = 10;
+      }
+    }
+
+    // 4. Consistent Income - 10 points
+    const incomeTransactions = transactions.filter(
+      (transaction) =>
+        transaction.type === "income"
+    );
+
+    const incomeScore =
+      incomeTransactions.length > 0 ? 10 : 0;
+
+    // 5. Financial Buffer - 10 points
+    let bufferScore = 0;
+
+    if (savings > 0) {
+      bufferScore = 10;
+    }
+
+    healthScore =
+      savingsScore +
+      expenseScore +
+      spendingScore +
+      incomeScore +
+      bufferScore;
+
+    // Make sure score stays between 0 and 100
+    healthScore = Math.max(
+      0,
+      Math.min(100, healthScore)
+    );
+
+    // ==========================================
+    // HEALTH STATUS
+    // ==========================================
+
+    let healthStatus = "";
+
+    if (healthScore >= 80) {
+      healthStatus = "Excellent";
+    } else if (healthScore >= 60) {
+      healthStatus = "Good";
+    } else if (healthScore >= 40) {
+      healthStatus = "Fair";
+    } else {
+      healthStatus = "Needs Improvement";
+    }
+
+    res.status(200).json({
+      message: "Financial summary fetched successfully",
+
+      summary: {
+        totalIncome,
+        totalExpenses,
+        savings,
+        savingsRate: Number(
+          savingsRate.toFixed(1)
+        ),
+        categoryExpenses,
+        healthScore,
+        healthStatus,
+      },
+    });
+
+  } catch (error) {
+    console.error(
+      "SUMMARY ERROR:",
+      error
+    );
+
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
     });
   }
 });

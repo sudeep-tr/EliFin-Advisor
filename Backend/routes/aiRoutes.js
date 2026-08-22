@@ -1,279 +1,292 @@
 const express = require("express");
+const router = express.Router();
 const Groq = require("groq-sdk");
 
-const User = require("../models/User");
-const Transaction = require("../models/Transaction");
 const protect = require("../middleware/authMiddleware");
-
-const router = express.Router();
+const Investment = require("../models/Investment");
 
 const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY,
 });
 
+// ==========================================
+// AI PORTFOLIO ADVICE
+// ==========================================
 
-// ======================================================
-// AI FINANCIAL ADVICE
-// POST /api/ai/advice
-// ======================================================
-
-router.post("/advice", protect, async (req, res) => {
+router.post("/portfolio-advice", protect, async (req, res) => {
   try {
-    const { question } = req.body;
+    console.log("================================");
+    console.log("AI PORTFOLIO REQUEST");
+    console.log("REQ.USER:", req.user);
+    console.log("================================");
 
-    if (!question || !question.trim()) {
-      return res.status(400).json({
-        message: "Question is required",
+    const userId =
+      req.user?.id ||
+      req.user?._id ||
+      req.user?.userId;
+
+    if (!userId) {
+      console.log("❌ NO USER ID");
+
+      return res.status(401).json({
+        success: false,
+        message: "User ID not found",
       });
     }
 
-    // Find logged-in user
-    const user = await User.findById(req.user.userId);
+    console.log("✅ AI USER ID:", userId);
 
-    if (!user) {
-      return res.status(404).json({
-        message: "User not found",
+    // ==========================================
+    // GET USER INVESTMENTS
+    // ==========================================
+
+    const investments = await Investment.find({
+      user: userId,
+    }).sort({
+      createdAt: -1,
+    });
+
+    console.log(
+      "📊 AI INVESTMENTS FOUND:",
+      investments.length
+    );
+
+    console.log(
+      "📊 INVESTMENTS:",
+      investments
+    );
+
+    // ==========================================
+    // NO INVESTMENTS
+    // ==========================================
+
+    if (investments.length === 0) {
+      return res.json({
+        success: true,
+        advice: `
+## 🤖 EliFin AI Advisor
+
+You don't have any investments added yet.
+
+### 💡 Suggestions
+
+- Start by defining your financial goals.
+- Build an emergency fund.
+- Consider starting a disciplined SIP.
+- Choose investments according to your risk tolerance.
+
+> This information is for general financial education, not personalized financial advice.
+        `,
       });
     }
 
-    // Find user's transactions
-    const transactions = await Transaction.find({
-      user: req.user.userId,
-    });
+    // ==========================================
+    // CALCULATE PORTFOLIO
+    // ==========================================
 
-    let totalIncome = 0;
-    let totalExpenses = 0;
+    const totalInvested = investments.reduce(
+      (sum, investment) =>
+        sum + Number(investment.investedAmount || 0),
+      0
+    );
 
-    const categoryExpenses = {};
+    const totalCurrentValue = investments.reduce(
+      (sum, investment) =>
+        sum + Number(investment.currentValue || 0),
+      0
+    );
 
-    transactions.forEach((transaction) => {
-      if (transaction.type === "income") {
-        totalIncome += Number(transaction.amount);
-      }
+    const totalReturns =
+      totalCurrentValue - totalInvested;
 
-      if (transaction.type === "expense") {
-        totalExpenses += Number(transaction.amount);
-
-        categoryExpenses[transaction.category] =
-          (categoryExpenses[transaction.category] || 0) +
-          Number(transaction.amount);
-      }
-    });
-
-    const savings = totalIncome - totalExpenses;
-
-    const savingsRate =
-      totalIncome > 0
-        ? ((savings / totalIncome) * 100).toFixed(1)
+    const returnPercentage =
+      totalInvested > 0
+        ? Number(
+            (
+              (totalReturns / totalInvested) *
+              100
+            ).toFixed(2)
+          )
         : 0;
 
-    // Financial information sent to AI
+    const totalMonthlySIP = investments.reduce(
+      (sum, investment) =>
+        sum + Number(investment.monthlyAmount || 0),
+      0
+    );
+
+    // ==========================================
+    // PORTFOLIO DATA FOR AI
+    // ==========================================
+
+    const portfolioData = {
+      totalInvested,
+      totalCurrentValue,
+      totalReturns,
+      returnPercentage,
+      totalMonthlySIP,
+      investmentCount: investments.length,
+
+      investments: investments.map(
+        (investment) => ({
+          name: investment.name,
+          type: investment.type,
+          category: investment.category,
+          monthlyAmount: Number(
+            investment.monthlyAmount || 0
+          ),
+          investedAmount: Number(
+            investment.investedAmount || 0
+          ),
+          currentValue: Number(
+            investment.currentValue || 0
+          ),
+          frequency: investment.frequency,
+          startDate: investment.startDate,
+        })
+      ),
+    };
+
+    console.log(
+      "📈 PORTFOLIO DATA SENT TO GROQ:"
+    );
+
+    console.log(
+      JSON.stringify(
+        portfolioData,
+        null,
+        2
+      )
+    );
+
+    // ==========================================
+    // GROQ PROMPT
+    // ==========================================
+
     const prompt = `
-You are EliFin, a personal financial advisor.
+You are EliFin, an AI financial education assistant.
 
-User:
-Name: ${user.name}
-Monthly Income: ₹${user.income}
+Analyze the user's investment portfolio below.
 
-Financial Summary:
-Total Income: ₹${totalIncome}
-Total Expenses: ₹${totalExpenses}
-Savings: ₹${savings}
-Savings Rate: ${savingsRate}%
+PORTFOLIO DATA:
 
-Expenses by Category:
-${JSON.stringify(categoryExpenses)}
+${JSON.stringify(
+  portfolioData,
+  null,
+  2
+)}
 
-User Question:
-${question}
+Provide a clear and useful portfolio analysis.
 
-Instructions:
-- Give practical and personalized financial advice.
-- Use the user's financial data when relevant.
-- Keep the answer simple and easy to understand.
-- Do not invent financial information.
-- Do not guarantee investment returns.
-- Never ask for passwords, OTPs, bank account numbers,
-  credit card numbers, or other sensitive information.
-- If professional financial advice is required,
-  recommend consulting a qualified financial professional.
+Include these sections:
+
+## 🤖 EliFin AI Advisor
+
+### 📊 Portfolio Performance
+Explain:
+- Total invested
+- Current portfolio value
+- Absolute gain/loss
+- Return percentage
+
+### 🎯 Portfolio Diversification
+Explain whether the portfolio is concentrated or diversified.
+
+### 💡 Practical Suggestions
+Give 4-5 useful suggestions based ONLY on the available portfolio data.
+
+### ⚠️ Things to Watch
+Mention relevant risks such as:
+- Market risk
+- Concentration risk
+- Liquidity risk
+- Long-term volatility
+
+### 🚀 Next Steps
+Give simple actions the investor can consider.
+
+Important rules:
+
+- Use Indian Rupee (₹).
+- Do not invent investments or financial information.
+- Do not claim that past performance guarantees future returns.
+- Do not call an absolute return an annualized return.
+- Clearly distinguish absolute return from annualized return.
+- This is general financial education, not personalized regulated financial advice.
+- Keep the response easy for a college student to understand.
+- Use Markdown.
 `;
 
-    // Call Groq
-    const completion = await groq.chat.completions.create({
-      model: "openai/gpt-oss-20b",
+    // ==========================================
+    // CALL GROQ
+    // ==========================================
 
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are EliFin, a helpful and responsible personal finance assistant.",
-        },
-        {
-          role: "user",
-          content: prompt,
-        },
-      ],
+    console.log("🤖 Calling Groq...");
 
-      temperature: 0.7,
-      max_tokens: 500,
-    });
+    const completion =
+      await groq.chat.completions.create({
+        model:  "openai/gpt-oss-20b",
+
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are EliFin, a helpful financial education assistant.",
+          },
+
+          {
+            role: "user",
+            content: prompt,
+          },
+        ],
+
+        temperature: 0.4,
+
+        max_tokens: 1500,
+      });
 
     const advice =
-      completion.choices[0].message.content;
+      completion.choices?.[0]?.message?.content ||
+      "";
 
-    res.status(200).json({
-      message: "AI advice generated successfully",
+    console.log("✅ GROQ RESPONSE RECEIVED");
+
+    // ==========================================
+    // SEND RESPONSE
+    // ==========================================
+
+    return res.json({
+      success: true,
+
       advice,
+
+      portfolio: {
+        totalInvested,
+        totalCurrentValue,
+        totalReturns,
+        returnPercentage,
+        totalMonthlySIP,
+        investmentCount:
+          investments.length,
+      },
     });
 
   } catch (error) {
-    console.error("GROQ ERROR:", error);
+    console.error(
+      "❌ AI PORTFOLIO ADVICE ERROR:"
+    );
 
-    res.status(500).json({
-      message: "AI service error",
-      error: error.message,
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+
+      message:
+        error.response?.data?.error?.message ||
+        error.message ||
+        "Failed to generate AI advice",
     });
   }
 });
-
-
-// ======================================================
-// AI CHAT
-// POST /api/ai/chat
-// ======================================================
-
-router.post("/chat", protect, async (req, res) => {
-  try {
-    const { message } = req.body;
-
-    if (!message || !message.trim()) {
-      return res.status(400).json({
-        message: "Message is required",
-      });
-    }
-
-    const transactions = await Transaction.find({
-      user: req.user.userId,
-    }).sort({ date: -1 });
-
-    let totalIncome = 0;
-    let totalExpenses = 0;
-
-    const categoryExpenses = {};
-
-    transactions.forEach((transaction) => {
-      if (transaction.type === "income") {
-        totalIncome += Number(transaction.amount);
-      }
-
-      if (transaction.type === "expense") {
-        totalExpenses += Number(transaction.amount);
-
-        categoryExpenses[transaction.category] =
-          (categoryExpenses[transaction.category] || 0) +
-          Number(transaction.amount);
-      }
-    });
-
-    const savings = totalIncome - totalExpenses;
-
-    const financialContext = `
-Total income: ₹${totalIncome}
-Total expenses: ₹${totalExpenses}
-Current savings: ₹${savings}
-
-Expenses by category:
-${JSON.stringify(categoryExpenses)}
-`;
-
-    const completion = await groq.chat.completions.create({
-      model: "openai/gpt-oss-20b",
-
-      messages: [
-        {
-          role: "system",
-          content: `
-You are EliFin, a helpful personal finance assistant.
-
-You have access to the user's financial summary.
-
-Give clear and practical answers based on the provided financial data.
-
-Do not invent financial information.
-
-Do not request passwords, bank account numbers, OTPs,
-credit card numbers, or other sensitive information.
-
-Do not guarantee investment returns.
-
-If professional financial advice is required,
-recommend consulting a qualified financial professional.
-`,
-        },
-
-        {
-          role: "user",
-          content: `
-Financial information:
-
-${financialContext}
-
-User question:
-
-${message}
-`,
-        },
-      ],
-
-      temperature: 0.7,
-      max_tokens: 500,
-    });
-
-    const reply =
-      completion.choices[0].message.content;
-
-    res.status(200).json({
-      message: "AI response generated successfully",
-      reply,
-    });
-
-  } catch (error) {
-    console.error("CHAT ERROR:", error);
-
-    res.status(500).json({
-      message: "AI service error",
-      error: error.message,
-    });
-  }
-});
-
-
-// ======================================================
-// AVAILABLE GROQ MODELS
-// GET /api/ai/models
-// ======================================================
-
-router.get("/models", protect, async (req, res) => {
-  try {
-    const models = await groq.models.list();
-
-    res.json({
-      models: models.data.map((model) => ({
-        id: model.id,
-        active: model.active,
-      })),
-    });
-
-  } catch (error) {
-    console.error("MODEL ERROR:", error);
-
-    res.status(500).json({
-      message: "Could not fetch models",
-      error: error.message,
-    });
-  }
-});
-
 
 module.exports = router;

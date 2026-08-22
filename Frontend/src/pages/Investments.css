@@ -1,0 +1,553 @@
+.investments-page {
+  padding: 30px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.investments-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.investments-header h1 {
+  margin: 0;
+  font-size: 32px;
+}
+
+.investments-header p {
+  margin-top: 8px;
+  color: #777;
+}
+
+.investment-back-btn {
+  border: none;
+  background: #111827;
+  color: white;
+  padding: 11px 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.investment-back-btn:hover {
+  opacity: 0.9;
+}
+
+/* ==========================================
+   SUMMARY
+========================================== */
+
+.investment-summary {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.investment-card {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+}
+
+.investment-card span {
+  color: #777;
+  font-size: 14px;
+}
+
+.investment-card h2 {
+  margin: 8px 0 0;
+  font-size: 24px;
+}
+
+.positive {
+  color: #16a34a;
+}
+
+.negative {
+  color: #dc2626;
+}
+
+/* ==========================================
+   CHART
+========================================== */
+
+.portfolio-chart-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.portfolio-chart-header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.portfolio-chart-header p {
+  margin: 7px 0 0;
+  color: #777;
+}
+
+.portfolio-chart {
+  width: 100%;
+  height: 300px;
+  margin-top: 20px;
+}
+
+/* ==========================================
+   FORM
+========================================== */
+
+.investment-form-card {
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.investment-form-card h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.investment-form-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.investment-form-row:first-child {
+  grid-template-columns: 2fr 1fr;
+}
+
+.investment-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-bottom: 15px;
+}
+
+.investment-form-group label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.investment-form-group input,
+.investment-form-group select,
+.investment-form-group textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+}
+
+.investment-form-group input:focus,
+.investment-form-group select:focus,
+.investment-form-group textarea:focus {
+  border-color: #6366f1;
+}
+
+.investment-form-group textarea {
+  resize: vertical;
+}
+
+.add-investment-btn {
+  border: none;
+  background: #111827;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.add-investment-btn:hover {
+  opacity: 0.9;
+}
+
+.investment-message {
+  margin-top: 15px;
+  padding: 12px;
+  background: #f3f4f6;
+  border-radius: 8px;
+}
+
+/* ==========================================
+   AI ADVISOR
+========================================== */
+
+.ai-advisor-card {
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.ai-advisor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.ai-advisor-header h2 {
+  margin: 0;
+}
+
+.ai-advisor-header p {
+  color: #777;
+  margin-bottom: 0;
+}
+
+.generate-advice-btn {
+  border: none;
+  background: #111827;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 9px;
+  cursor: pointer;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.generate-advice-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ai-advice-content {
+  margin-top: 25px;
+  padding: 20px;
+  background: #f8fafc;
+  border-radius: 12px;
+  line-height: 1.7;
+}
+
+.ai-advice-content h2 {
+  margin-top: 10px;
+}
+
+.ai-advice-content h3 {
+  margin-top: 20px;
+}
+
+.ai-advice-content li {
+  margin-left: 20px;
+}
+
+/* ==========================================
+   PORTFOLIO
+========================================== */
+
+.portfolio-section {
+  margin-top: 30px;
+}
+
+.portfolio-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.portfolio-title h2 {
+  margin: 0;
+}
+
+.portfolio-title p {
+  color: #777;
+  margin-top: 5px;
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.portfolio-card {
+  background: white;
+  padding: 22px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.portfolio-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.portfolio-card-top h3 {
+  margin: 0 0 8px;
+}
+
+.investment-type {
+  display: inline-block;
+  background: #eef2ff;
+  color: #4338ca;
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.investment-delete {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 17px;
+}
+
+.portfolio-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-top: 25px;
+}
+
+.portfolio-details div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.portfolio-details span {
+  color: #777;
+  font-size: 13px;
+}
+
+.portfolio-details strong {
+  font-size: 17px;
+}
+
+.portfolio-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 22px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+  color: #777;
+  font-size: 13px;
+}
+
+/* ==========================================
+   EMPTY / LOADING
+========================================== */
+
+.empty-portfolio {
+  background: white;
+  text-align: center;
+  padding: 60px 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+
+.empty-icon {
+  font-size: 50px;
+}
+
+.empty-portfolio h3 {
+  margin-bottom: 5px;
+}
+
+.empty-portfolio p {
+  color: #777;
+}
+
+.investment-loading {
+  background: white;
+  padding: 50px;
+  text-align: center;
+  border-radius: 16px;
+}
+
+/* ==========================================
+   RESPONSIVE
+========================================== */
+
+@media (max-width: 1000px) {
+  .investment-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .portfolio-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .investment-form-row,
+  .investment-form-row:first-child {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 650px) {
+  .investments-page {
+    padding: 18px;
+  }
+
+  .investments-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .investment-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .ai-advisor-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .generate-advice-btn {
+    width: 100%;
+  }
+
+  .portfolio-details {
+    grid-template-columns: 1fr;
+  }
+}
+/* =====================================================
+   AI ADVISOR MARKDOWN
+===================================================== */
+
+.ai-markdown-content {
+  width: 100%;
+  line-height: 1.6;
+  color: #374151;
+}
+
+.ai-markdown-heading {
+  margin: 16px 0 8px;
+  color: #111827;
+  font-weight: 700;
+}
+
+.ai-markdown-heading:first-child {
+  margin-top: 0;
+}
+
+.ai-markdown-paragraph {
+  margin: 8px 0;
+  line-height: 1.65;
+}
+
+.ai-markdown-bold {
+  font-weight: 700;
+  color: #111827;
+}
+
+/* =====================================================
+   LISTS
+===================================================== */
+
+.ai-markdown-list {
+  margin: 10px 0;
+  padding-left: 24px;
+}
+
+.ai-markdown-list li {
+  margin: 6px 0;
+  line-height: 1.55;
+}
+
+/* =====================================================
+   TABLE
+===================================================== */
+
+.ai-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin: 16px 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+}
+
+.ai-markdown-table {
+  width: 100%;
+  min-width: 450px;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.ai-markdown-table th {
+  padding: 12px 14px;
+  text-align: left;
+  font-weight: 700;
+  background: #f3f4f6;
+  color: #111827;
+  border-bottom: 1px solid #d1d5db;
+}
+
+.ai-markdown-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  line-height: 1.5;
+}
+
+.ai-markdown-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* =====================================================
+   BLOCKQUOTE
+===================================================== */
+
+.ai-blockquote {
+  margin: 14px 0;
+  padding: 10px 15px;
+  border-left: 4px solid #9ca3af;
+  background: #f9fafb;
+  color: #4b5563;
+  border-radius: 5px;
+}
+
+/* =====================================================
+   INLINE CODE
+===================================================== */
+
+.ai-inline-code {
+  padding: 2px 6px;
+  border-radius: 5px;
+  background: #f3f4f6;
+  font-family: monospace;
+  font-size: 13px;
+}
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+  .ai-markdown-table {
+    min-width: 400px;
+    font-size: 12px;
+  }
+
+  .ai-markdown-table th,
+  .ai-markdown-table td {
+    padding: 8px 10px;
+  }
+
+}

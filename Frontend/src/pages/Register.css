@@ -1,0 +1,413 @@
+
+/* =========================================
+   ELIFIN REGISTER PAGE
+   ========================================= */
+
+* {
+  box-sizing: border-box;
+}
+
+.register-page {
+  min-height: 100vh;
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 30px 20px;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(37, 99, 235, 0.12),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at bottom right,
+      rgba(16, 185, 129, 0.12),
+      transparent 35%
+    ),
+    #f8fafc;
+}
+
+
+/* =========================================
+   REGISTER CARD
+   ========================================= */
+
+.register-card {
+  width: 100%;
+  max-width: 500px;
+
+  padding: 40px;
+
+  background: #ffffff;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 22px;
+
+  box-shadow:
+    0 20px 50px rgba(15, 23, 42, 0.08);
+
+  animation: registerAppear 0.5s ease;
+}
+
+
+/* =========================================
+   LOGO
+   ========================================= */
+
+.register-logo {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-bottom: 25px;
+}
+
+.register-logo-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #10b981
+  );
+
+  color: white;
+
+  font-size: 25px;
+  font-weight: 700;
+
+  box-shadow:
+    0 8px 20px rgba(37, 99, 235, 0.25);
+}
+
+.register-logo h1 {
+  margin: 0;
+
+  font-size: 32px;
+
+  font-weight: 800;
+
+  color: #111827;
+
+  letter-spacing: -1px;
+}
+
+.register-logo h1 span {
+  color: #2563eb;
+}
+
+
+/* =========================================
+   HEADING
+   ========================================= */
+
+.register-heading {
+  text-align: center;
+
+  margin-bottom: 25px;
+}
+
+.register-heading h2 {
+  margin: 0 0 8px;
+
+  font-size: 25px;
+
+  color: #111827;
+}
+
+.register-heading p {
+  margin: 0;
+
+  color: #64748b;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+}
+
+
+/* =========================================
+   ERROR
+   ========================================= */
+
+.register-error {
+  padding: 12px 14px;
+
+  margin-bottom: 18px;
+
+  border-radius: 10px;
+
+  background: #fef2f2;
+
+  border: 1px solid #fecaca;
+
+  color: #dc2626;
+
+  font-size: 14px;
+}
+
+
+/* =========================================
+   SUCCESS
+   ========================================= */
+
+.register-success {
+  padding: 12px 14px;
+
+  margin-bottom: 18px;
+
+  border-radius: 10px;
+
+  background: #ecfdf5;
+
+  border: 1px solid #a7f3d0;
+
+  color: #047857;
+
+  font-size: 14px;
+}
+
+
+/* =========================================
+   FORM
+   ========================================= */
+
+.register-form-group {
+  margin-bottom: 18px;
+}
+
+.register-form-group label {
+  display: block;
+
+  margin-bottom: 7px;
+
+  color: #374151;
+
+  font-size: 14px;
+
+  font-weight: 600;
+}
+
+.register-form-group input {
+  width: 100%;
+
+  padding: 13px 14px;
+
+  border: 1px solid #d1d5db;
+
+  border-radius: 10px;
+
+  background: #ffffff;
+
+  color: #111827;
+
+  font-size: 15px;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.register-form-group input::placeholder {
+  color: #9ca3af;
+}
+
+.register-form-group input:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+
+/* =========================================
+   AGE + INCOME
+   ========================================= */
+
+.register-row {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 15px;
+}
+
+
+/* =========================================
+   REGISTER BUTTON
+   ========================================= */
+
+.register-btn {
+  width: 100%;
+
+  padding: 14px;
+
+  margin-top: 5px;
+
+  border: none;
+
+  border-radius: 10px;
+
+  background: linear-gradient(
+    135deg,
+    #2563eb,
+    #1d4ed8
+  );
+
+  color: white;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.register-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 8px 20px rgba(37, 99, 235, 0.25);
+}
+
+.register-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.register-btn:disabled {
+  opacity: 0.65;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================
+   LOGIN LINK
+   ========================================= */
+
+.login-link {
+  display: flex;
+
+  justify-content: center;
+  align-items: center;
+
+  gap: 5px;
+
+  margin-top: 23px;
+
+  font-size: 14px;
+
+  color: #64748b;
+}
+
+.login-link a {
+  color: #2563eb;
+
+  font-weight: 700;
+
+  text-decoration: none;
+}
+
+.login-link a:hover {
+  color: #1d4ed8;
+
+  text-decoration: underline;
+}
+
+
+/* =========================================
+   FOOTER
+   ========================================= */
+
+.register-footer {
+  text-align: center;
+
+  margin: 22px 0 0;
+
+  padding-top: 18px;
+
+  border-top: 1px solid #e5e7eb;
+
+  color: #94a3b8;
+
+  font-size: 12px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================
+   ANIMATION
+   ========================================= */
+
+@keyframes registerAppear {
+
+  from {
+    opacity: 0;
+
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0);
+  }
+
+}
+
+
+/* =========================================
+   MOBILE
+   ========================================= */
+
+@media (max-width: 520px) {
+
+  .register-page {
+    padding: 20px 14px;
+  }
+
+  .register-card {
+    padding: 30px 22px;
+
+    border-radius: 18px;
+  }
+
+  .register-logo h1 {
+    font-size: 28px;
+  }
+
+  .register-heading h2 {
+    font-size: 22px;
+  }
+
+  .register-row {
+    grid-template-columns: 1fr;
+
+    gap: 0;
+  }
+
+}
+

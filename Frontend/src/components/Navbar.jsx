@@ -1,9 +1,9 @@
 import { Link, useNavigate } from "react-router-dom";
+import "./Navbar.css";
+import React from "react";
 
 function Navbar() {
   const navigate = useNavigate();
-
-  const token = localStorage.getItem("token");
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -12,58 +12,44 @@ function Navbar() {
     navigate("/login");
   };
 
-  // Don't show navbar when user isn't logged in
-  if (!token) {
-    return null;
-  }
-
   return (
-    <nav
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: "15px 30px",
-        borderBottom: "1px solid #ddd",
-      }}
-    >
-      {/* Logo */}
+    <nav className="navbar">
 
-      <Link
-        to="/dashboard"
-        style={{
-          textDecoration: "none",
-          fontSize: "22px",
-          fontWeight: "bold",
-        }}
-      >
-        💰 EliFin
-      </Link>
+      <div className="navbar-logo">
+        💰 <Link to="/dashboard">
+          EliFin
+        </Link>
+      </div>
 
-      {/* Navigation */}
-
-      <div
-        style={{
-          display: "flex",
-          gap: "20px",
-          alignItems: "center",
-        }}
-      >
+      <div className="navbar-links">
 
         <Link to="/dashboard">
-          📊 Dashboard
+          🏠 Dashboard
         </Link>
 
         <Link to="/transactions">
           💸 Transactions
         </Link>
 
+        <Link to="/budget">
+          💰 Budget
+        </Link>
+        <Link to="/investments">
+          📈 Investments
+        </Link>
+
         <Link to="/ai-advisor">
           🤖 AI Advisor
         </Link>
+        <Link to="/profile">
+  👤 Profile
+</Link>
 
-        <button onClick={logout}>
-          Logout
+        <button
+          onClick={logout}
+          className="logout-button"
+        >
+          🚪 Logout
         </button>
 
       </div>
