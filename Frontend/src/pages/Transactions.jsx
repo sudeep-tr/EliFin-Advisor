@@ -3,7 +3,7 @@ import axios from "axios";
 import "./Transactions.css";
 
 function Transactions() {
-  const API = "http://localhost:5000";
+  const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const token = localStorage.getItem("token");
 
   // ==========================================
