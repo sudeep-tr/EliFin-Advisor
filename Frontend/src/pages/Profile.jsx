@@ -21,7 +21,8 @@ function Profile() {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
-
+  
+  const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -40,7 +41,7 @@ function Profile() {
       const token = localStorage.getItem("token");
 
       const response = await axios.put(
-        "http://localhost:5000/api/users/profile",
+        '${API}/api/users/profile',
         {
           name: formData.name,
           email: formData.email,
