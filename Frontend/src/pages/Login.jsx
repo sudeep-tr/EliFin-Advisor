@@ -21,11 +21,13 @@ function Login() {
     try {
       console.log("🔐 Logging in...");
 
+      const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
       const response = await axios.post(
-        const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        ${API}/api/auth/login`,
         {
-          email: email.trim(),
-          password,
+        email: formData.email,
+        password: formData.password,
         }
       );
 
