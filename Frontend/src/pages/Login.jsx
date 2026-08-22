@@ -26,8 +26,8 @@ function Login() {
       const response = await axios.post(
         `${API}/api/auth/login`,
         {
-          email: formData.email,
-          password: formData.password,
+          email: email,
+          password: password,
         }
       );
 
